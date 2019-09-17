@@ -1,0 +1,73 @@
+version: "3"
+services:
+    
+  server:
+    hostname: server
+    container_name: server
+    depends_on: 
+      - db
+    # restart: always
+    build: ./server
+    ports:
+      - "5000:5000"
+    volumes: 
+      - ./server/:/home/server
+    expose:
+      - "5000"
+    environment: 
+      client: client
+    # networks:
+    #   jsnetwork:
+    #     aliases:
+    #       - auah1
+
+ 
+  client:
+    container_name: client
+    # restart: always
+    depends_on: 
+      - server
+    build: ./client
+    ports:
+      - "3000:3000"
+    volumes: 
+      - ./client/src/:/home/client/src
+    links:
+      - server
+    expose:
+      - "3000"
+    # networks:
+    #   jsnetwork:
+    #     aliases:
+    #       - auah2
+    
+  db:
+    container_name : mongose
+    image: mongo
+    ports: 
+      - "27017:27017"
+        
+
+# networks:
+#   default:
+#     external: 
+#       name: jsnetwork
+  # jsnetwork:
+  #   driver: bridge
+  #   ipam:
+  #    config:
+  #      - subnet: 127.0.0.0/8
+  #        gateway: 127.0.0.1
+
+# 
+  # eg:
+  #   container_name: eg
+  #   # restart: always
+  #   build: ./express-gateway
+  #   ports:
+  #     - "8080:8080"
+  #     - "9876:9876"
+  #   volumes: 
+  #     - ./express-gateway/config/:/home/express-gateway/config/
+  #   expose:
+  #     - "9876"
